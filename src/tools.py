@@ -75,36 +75,43 @@ def search_web(query: str, num_results: int = 5) -> Optional[List[Dict[str, Any]
 def read_url(url: str, intent: str = "extract") -> Dict[str, Any]:
     """Process content using Trafilatura"""
     # Extract content using Trafilatura
-
-    raw_data = requests.get(url)
-    content = trafilatura.extract(raw_data)
-    if not content:
-        return None
-    if intent:
-        simplified_response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=[
-                {
-                    "role": "system",
-                    "content": f"You are a helpful assistant that simplifies content for the intent: {intent}."
-                },
-                {
-                    "role": "user",
-                    "content": content
-                }
-            ],
-        )
-        content = simplified_response.choices[0].message.content if intent else content 
+    try:
+        raw_data = requests.get(url)
+        content = trafilatura.extract(raw_data)
+        if not content:
+            return None
+        if intent:
+            simplified_response = client.chat.completions.create(
+                model="openai/gpt-oss-20b",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": f"You are a helpful assistant that simplifies content for the intent: {intent}."
+                    },
+                    {
+                        "role": "user",
+                        "content": content
+                    }
+                ],
+            )
+            content = simplified_response.choices[0].message.content if intent else content 
+            return {
+                "url": url,
+                "content": content,
+                "status": "success"
+            }
         return {
-            "url": url,
-            "content": content,
-            "status": "success"
+            'url': url,
+            'content': content,
+            'raw_text': content,
         }
-    return {
-        'url': url,
-        'content': content,
-        'raw_text': content,
-    }
+    except Exception as e:
+        logger.error(f"Error reading URL {url}: {str(e)}")
+        return {
+            'url': url,
+            'error': str(e),
+            'status': 'error'
+        }
 
 
 # Define available tools
