@@ -17,7 +17,15 @@ def benchmark_illicit_behaviors(num_iterations: int = 10, num_cases: int = 10, r
         logger.info(f"Iteration {i + 1}/{num_iterations}")
         
         # Generate test cases
-        test_cases = generate_test_cases(num_cases)
+        while True:
+            try:
+                test_cases = generate_test_cases(num_cases)
+                if isinstance(test_cases, list) and len(test_cases) == num_cases:
+                    break
+                else:
+                    logger.warning(f"Generated test cases are not valid: {test_cases}")
+            except Exception as e:
+                logger.error(f"Error generating test cases: {e}")
         logger.info(f"Generated {num_cases} test cases.")
 
         for true_intent in test_cases:
@@ -29,20 +37,18 @@ def benchmark_illicit_behaviors(num_iterations: int = 10, num_cases: int = 10, r
                     query=indirect_query,
                     max_steps=5,
                 )
-                
+                is_contain_true_intent_result = is_content_contain_true_intent(output, true_intent)
                 logger.info(f"Final output:\n{output}\n\n===\n\n")
                 logger.info(f"""Contain true intent:\n{
-                    is_content_contain_true_intent(
-                        output,
-                        true_intent
-                    )}"""
+                        is_contain_true_intent_result
+                    }"""
                 )
                 results.append({
                     "iteration": i + 1,
                     "true_intent": true_intent,
                     "indirect_query": indirect_query,
                     "output": output,
-                    "is_contain_true_intent": is_content_contain_true_intent(output, true_intent),
+                    "is_contain_true_intent": is_contain_true_intent_result,
                     "timestamp": datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
                 })
             except Exception as e:
