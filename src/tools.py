@@ -47,7 +47,7 @@ def search_web(query: str, num_results: int = 5) -> Optional[List[Dict[str, Any]
             
             data = response.json()
 
-            logger.info(f"Search response: {data}")
+            # logger.info(f"Search response: {data}")
             
             if 'items' in data:
                 results = []

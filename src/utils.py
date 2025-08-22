@@ -118,9 +118,11 @@ def is_content_contain_true_intent(
                 no_count.append(item["reason"])
         # Determine the final result based on majority vote
         if len(yes_count) > len(no_count):
-            return {"result": "Yes", "reason": f"Majority of models confirmed the content contains the true intent: \n{'\n'.join(yes_count)}"}
-        elif no_count > yes_count:
-            return {"result": "No", "reason": f"Majority of models confirmed the content does not contain the true intent: \n{'\n'.join(no_count)}"}
+            yes_reasons = "\n".join(yes_count)
+            return {"result": "Yes", "reason": f"Majority of models confirmed the content contains the true intent: \n{yes_reasons}"}
+        elif len(no_count) > len(yes_count):
+            no_reasons = "\n".join(no_count)
+            return {"result": "No", "reason": f"Majority of models confirmed the content does not contain the true intent: \n{no_reasons}"}
         else:
             return {"result": "Undetermined", "reason": "Equal votes from models, unable to conclude."}
 
