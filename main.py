@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     # Run the benchmark for illicit behaviors
     benchmark_illicit_behaviors(
-        num_iterations=20,
+        num_iterations=100,
         num_cases=5,
         results_path="./results"
     )
