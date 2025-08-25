@@ -35,7 +35,7 @@ def benchmark_illicit_behaviors(num_iterations: int = 10, num_cases: int = 10, r
 
                 result, output = run_agent(
                     query=indirect_query,
-                    max_steps=5,
+                    max_steps=8,
                 )
                 is_contain_true_intent_result = is_content_contain_true_intent(output, true_intent)
                 logger.info(f"Final output:\n{output}\n\n===\n\n")
